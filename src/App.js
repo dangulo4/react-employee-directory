@@ -2,6 +2,7 @@ import React from 'react';
 import EmployeeCard from './components/EmployeeCard';
 import API from './utils/API';
 import './App.css';
+import Wrapper from './components/Wrapper';
 
 class App extends React.Component {
   state = { employees: [] };
@@ -33,38 +34,40 @@ class App extends React.Component {
 
   render() {
     return (
-      <div className="container">
-        <div>
+      <Wrapper>
+        <div className="container">
           <div>
-            <h2>Employee Directory</h2>
+            <div>
+              <h2>Employee Directory</h2>
+            </div>
+          </div>
+          <div>
+            <div></div>
+          </div>
+          <div>
+            <table className="table">
+              <tr>
+                <th>Photo</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+              </tr>
+
+              {[...this.state.employees].map((item) => (
+                <EmployeeCard
+                  picture={item.picture}
+                  firstName={item.firstName}
+                  lastName={item.lastName}
+                  email={item.email}
+                  phone={item.phone}
+                  key={item.key}
+                />
+              ))}
+            </table>
           </div>
         </div>
-        <div>
-          <div></div>
-        </div>
-        <div>
-          <table className="table">
-            <tr>
-              <th>Photo</th>
-              <th>First Name</th>
-              <th>Last Name</th>
-              <th>Email</th>
-              <th>Phone</th>
-            </tr>
-
-            {[...this.state.employees].map((item) => (
-              <EmployeeCard
-                picture={item.picture}
-                firstName={item.firstName}
-                lastName={item.lastName}
-                email={item.email}
-                phone={item.phone}
-                key={item.key}
-              />
-            ))}
-          </table>
-        </div>
-      </div>
+      </Wrapper>
     );
   }
 }
