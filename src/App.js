@@ -18,7 +18,7 @@ class App extends React.Component {
             picture: e.picture.large,
             email: e.email,
             phone: e.phone,
-            dob: e.age,
+            city: e.location.city,
             key: i,
           })),
         });
@@ -52,6 +52,7 @@ class App extends React.Component {
                 <th>Last Name</th>
                 <th>Email</th>
                 <th>Phone</th>
+                <th>City</th>
               </tr>
 
               {[...this.state.employees].map((item) => (
@@ -61,6 +62,7 @@ class App extends React.Component {
                   lastName={item.lastName}
                   email={item.email}
                   phone={item.phone}
+                  city={item.city}
                   key={item.key}
                 />
               ))}
