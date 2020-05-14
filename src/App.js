@@ -1,11 +1,12 @@
 import React from 'react';
 import EmployeeCard from './components/EmployeeCard';
+import SearchForm from './components/SeachForm';
+import Wrapper from './components/Wrapper';
 import API from './utils/API';
 import './App.css';
-import Wrapper from './components/Wrapper';
 
 class App extends React.Component {
-  state = { employees: [] };
+  state = { employees: [], search: '' };
 
   componentDidMount() {
     API.search()
@@ -26,10 +27,30 @@ class App extends React.Component {
       .catch((err) => console.log(err));
   }
 
-  getEmployees = () => {
-    API.search()
-      .then((res) => this.setState({ result: res.data }))
-      .catch((err) => console.log(err));
+  searchEmployee = (filter) => {
+    console.log('Search', filter);
+    const filteredList = this.state.employees.filter((employee) => {
+      // merge data together, then check to see if user input exists
+      let values = Object.values(employee).join('').toLowerCase();
+      return values.indexOf(filter.toLowerCase()) !== -1;
+    });
+    // Update the employee list with the filtered value
+    this.setState({ employees: filteredList });
+  };
+
+  handleInputChange = (e) => {
+    const name = e.target.name;
+    const value = e.target.value;
+    this.setState({
+      [name]: value,
+    });
+    console.log('Handle ', this.state.search);
+  };
+
+  handleFormSubmit = (e) => {
+    e.preventDefault();
+    console.log('Button Clicked', this.state.search, e);
+    this.searchEmployee(this.state.search);
   };
 
   render() {
@@ -42,7 +63,15 @@ class App extends React.Component {
             </div>
           </div>
           <div>
-            <div></div>
+            <div className="row">
+              <div className="col-md-6">
+                <SearchForm
+                  value={this.state.search}
+                  handleInputChange={this.handleInputChange}
+                  handleFormSubmit={this.handleFormSubmit}
+                />
+              </div>
+            </div>
           </div>
           <div>
             <table className="table">
@@ -54,7 +83,6 @@ class App extends React.Component {
                 <th>Phone</th>
                 <th>City</th>
               </tr>
-
               {[...this.state.employees].map((item) => (
                 <EmployeeCard
                   picture={item.picture}
