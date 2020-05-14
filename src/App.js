@@ -57,32 +57,34 @@ class App extends React.Component {
     return (
       <Wrapper>
         <div className="container">
-          <div>
-            <div>
+          <div className="row">
+            <div className="col-md-6">
               <h2>Employee Directory</h2>
             </div>
           </div>
-          <div>
-            <div className="row">
-              <div className="col-md-6">
-                <SearchForm
-                  value={this.state.search}
-                  handleInputChange={this.handleInputChange}
-                  handleFormSubmit={this.handleFormSubmit}
-                />
-              </div>
+
+          <div className="row">
+            <div className="col-md-6">
+              <SearchForm
+                value={this.state.search}
+                handleInputChange={this.handleInputChange}
+                handleFormSubmit={this.handleFormSubmit}
+              />
             </div>
           </div>
-          <div>
+
+          <div className="row">
             <table className="table">
-              <tr>
-                <th>Photo</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Email</th>
-                <th>Phone</th>
-                <th>City</th>
-              </tr>
+              <thead>
+                <tr>
+                  <th>Photo</th>
+                  <th>First Name</th>
+                  <th>Last Name</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>City</th>
+                </tr>
+              </thead>
               {[...this.state.employees].map((item) => (
                 <EmployeeCard
                   picture={item.picture}
