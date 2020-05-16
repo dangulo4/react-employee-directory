@@ -3,7 +3,7 @@ import React from 'react';
 function SearchForm(props) {
   return (
     <form>
-      <div className="form-group">
+      <div className="form-group" style={{ display: 'flex' }}>
         <label htmlFor="search"></label>
         <input
           onChange={props.handleInputChange}
@@ -14,10 +14,13 @@ function SearchForm(props) {
           placeholder="Search Employee"
           id="search"
         />
-        <br />
         <button onClick={props.handleFormSubmit} className="btn btn-primary">
           Search
         </button>
+        <button onClick={props.refreshPage} className="btn btn-primary ml-1">
+          Reset
+        </button>
+        {/* <br /> */}
       </div>
     </form>
   );
