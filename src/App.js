@@ -1,20 +1,26 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import EmployeeCard from './components/EmployeeCard';
 import SearchForm from './components/SeachForm';
 import Wrapper from './components/Wrapper';
 import Col from './components/Col';
+import Loading from './components/loading/Loading';
 import API from './utils/API';
 import './App.css';
 
-class App extends React.Component {
-  state = { employees: [], search: '' };
+const App = () => {
+  const [loading, setLoading] = useState(true);
+  const [employees, setEmployees] = useState([]);
+  const [search, setSearch] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
 
-  componentDidMount() {
-    API.search()
-      .then((res) => {
+  const fetchEmployees = async () => {
+    setLoading(true);
+    //fetch people
+    try {
+      await API.search().then((res) => {
         console.log(res);
-        this.setState({
-          employees: res.data.results.map((e, i) => ({
+        setEmployees(
+          res.data.results.map((e, i) => ({
             firstName: e.name.first,
             lastName: e.name.last,
             picture: e.picture.large,
@@ -22,88 +28,127 @@ class App extends React.Component {
             phone: e.phone,
             city: e.location.city,
             key: i,
-          })),
-        });
-      })
-      .catch((err) => console.log(err));
-  }
-
-  refreshPage() {
-    window.location.reload(false);
-  }
-
-  searchEmployee = (filter) => {
-    console.log('Search', filter);
-    const filteredList = this.state.employees.filter((employee) => {
-      // merge data together, then check to see if employee exists
-      let values = Object.values(employee).join('').toLowerCase();
-      return values.indexOf(filter.toLowerCase()) !== -1;
-    });
-    // Update the employee list with the filtered value
-    this.setState({ employees: filteredList });
+          }))
+        );
+        setSearchResults(
+          res.data.results.map((e, i) => ({
+            firstName: e.name.first,
+            lastName: e.name.last,
+            picture: e.picture.large,
+            email: e.email,
+            phone: e.phone,
+            city: e.location.city,
+            key: i,
+          }))
+        );
+      });
+      setLoading(false);
+    } catch (err) {
+      setLoading(false);
+      console.log(err);
+    }
   };
 
-  handleInputChange = (e) => {
-    // const name = e.target.name;
-    // const value = e.target.value;
-    this.setState({
-      [e.target.name]: e.target.value,
-    });
-    console.log('Handle ', this.state.search);
+  useEffect(() => {
+    fetchEmployees();
+  }, []);
+
+  const searchHandler = (search) => {
+    console.log('Search', search);
+    setSearch(search);
+
+    if (search !== '') {
+      const newEmployeeList = employees.filter((employee) => {
+        return (
+          Object.values(employee)
+            .join(' ')
+            // .toString()
+            .toLowerCase()
+            .includes(search.toLowerCase())
+        );
+      });
+      setSearchResults(newEmployeeList);
+    } else {
+      setSearchResults(employees);
+    }
   };
 
-  handleFormSubmit = (e) => {
-    e.preventDefault();
-    console.log('Button Clicked', this.state.search, e);
-    this.searchEmployee(this.state.search);
-  };
+  useEffect(() => {
+    const getAllEmployees = async () => {
+      const allEmployees = await fetchEmployees();
+      if (allEmployees) setEmployees(allEmployees);
+    };
+    getAllEmployees();
+  }, []);
 
-  render() {
+  useEffect(() => {}, [employees]);
+
+  // const handleFormSubmit = async (e) => {
+  //   e.preventDefault();
+  //   try {
+  //     await searchHandler(search);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+
+  if (loading) {
     return (
       <Wrapper>
-        <div className="container">
-          <div className="row">
-            <Col size="md-4">
-              <h2>Employee Directory</h2>
-              <SearchForm
-                value={this.state.search}
-                handleInputChange={this.handleInputChange}
-                handleFormSubmit={this.handleFormSubmit}
-              />
-            </Col>
-          </div>
-
-          <div className="row">
-            <Col size="md-12">
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th>Photo</th>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th>City</th>
-                  </tr>
-                </thead>
-                {[...this.state.employees].map((item) => (
-                  <EmployeeCard
-                    picture={item.picture}
-                    firstName={item.firstName}
-                    lastName={item.lastName}
-                    email={item.email}
-                    phone={item.phone}
-                    city={item.city}
-                    key={item.key}
-                  />
-                ))}
-              </table>
-            </Col>
-          </div>
-        </div>
+        <Loading />
       </Wrapper>
     );
   }
-}
+
+  return (
+    <Wrapper>
+      <div className='container'>
+        <div className='row'>
+          <Col size='md-4'>
+            <h2>Employee Directory</h2>
+
+            <SearchForm
+              // employees={employees}
+              searchKeyword={searchHandler}
+              // handleFormSubmit={handleFormSubmit}
+              term={search}
+            />
+          </Col>
+        </div>
+
+        <div className='row'>
+          <Col size='md-12'>
+            <table className='table'>
+              <thead>
+                <tr>
+                  <th>Photo</th>
+                  <th>First Name</th>
+                  <th>Last Name</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>City</th>
+                </tr>
+              </thead>
+
+              {searchResults.map((e) => {
+                return (
+                  <EmployeeCard
+                    picture={e.picture}
+                    firstName={e.firstName}
+                    lastName={e.lastName}
+                    email={e.email}
+                    phone={e.phone}
+                    city={e.city}
+                    key={e.key}
+                  />
+                );
+              })}
+            </table>
+          </Col>
+        </div>
+      </div>
+    </Wrapper>
+  );
+};
 
 export default App;

@@ -1,29 +1,32 @@
-import React from 'react';
+import React, { useRef } from 'react';
 
-function SearchForm(props) {
+const SearchForm = (props) => {
+  const inputEl = useRef('');
+
+  const getSearchTerm = () => {
+    props.searchKeyword(inputEl.current.value);
+  };
+
   return (
-    <form>
-      <div className="form-group" style={{ display: 'flex' }}>
-        <label htmlFor="search"></label>
+    <>
+      <div className='form-group' style={{ display: 'flex' }}>
+        <label htmlFor='search'></label>
         <input
-          onChange={props.handleInputChange}
-          value={props.value}
-          name="search"
-          type="text"
-          className="form-control"
-          placeholder="Search Employee"
-          id="search"
+          ref={inputEl}
+          onChange={getSearchTerm}
+          value={props.term}
+          name='search'
+          type='text'
+          className='form-control'
+          placeholder='Search Employee'
+          id='search'
         />
-        <button onClick={props.handleFormSubmit} className="btn btn-primary">
-          Search
-        </button>
-        <button onClick={props.refreshPage} className="btn btn-primary ml-1">
-          Reset
-        </button>
-        {/* <br /> */}
+        {/* <button className='btn btn-primary' onClick={toggleSearch}>
+          Sort
+        </button> */}
       </div>
-    </form>
+    </>
   );
-}
+};
 
 export default SearchForm;
