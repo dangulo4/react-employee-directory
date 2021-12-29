@@ -1,24 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import EmployeeCard from './components/EmployeeCard';
-import SearchForm from './components/SeachForm';
-import Wrapper from './components/Wrapper';
-import Col from './components/Col';
-import Loading from './components/loading/Loading';
-import API from './utils/API';
-import './App.css';
+import React, { useState, useEffect } from 'react'
+import EmployeeCard from './components/EmployeeCard'
+import SearchForm from './components/SeachForm'
+import Wrapper from './components/Wrapper'
+import Col from './components/Col'
+import Loading from './components/loading/Loading'
+import API from './utils/API'
+import './App.css'
 
 const App = () => {
-  const [loading, setLoading] = useState(true);
-  const [employees, setEmployees] = useState([]);
-  const [search, setSearch] = useState('');
-  const [searchResults, setSearchResults] = useState([]);
+  const [loading, setLoading] = useState(true)
+  const [employees, setEmployees] = useState([])
+  const [search, setSearch] = useState('')
+  const [searchResults, setSearchResults] = useState([])
 
   const fetchEmployees = async () => {
-    setLoading(true);
+    setLoading(true)
     //fetch people
     try {
       await API.search().then((res) => {
-        console.log(res);
+        console.log(res)
         setEmployees(
           res.data.results.map((e, i) => ({
             firstName: e.name.first,
@@ -29,7 +29,7 @@ const App = () => {
             city: e.location.city,
             key: i,
           }))
-        );
+        )
         setSearchResults(
           res.data.results.map((e, i) => ({
             firstName: e.name.first,
@@ -40,22 +40,22 @@ const App = () => {
             city: e.location.city,
             key: i,
           }))
-        );
-      });
-      setLoading(false);
+        )
+      })
+      setLoading(false)
     } catch (err) {
-      setLoading(false);
-      console.log(err);
+      setLoading(false)
+      console.log(err)
     }
-  };
+  }
 
   useEffect(() => {
-    fetchEmployees();
-  }, []);
+    fetchEmployees()
+  }, [])
 
   const searchHandler = (search) => {
-    console.log('Search', search);
-    setSearch(search);
+    console.log('Search', search)
+    setSearch(search)
 
     if (search !== '') {
       const newEmployeeList = employees.filter((employee) => {
@@ -65,23 +65,23 @@ const App = () => {
             // .toString()
             .toLowerCase()
             .includes(search.toLowerCase())
-        );
-      });
-      setSearchResults(newEmployeeList);
+        )
+      })
+      setSearchResults(newEmployeeList)
     } else {
-      setSearchResults(employees);
+      setSearchResults(employees)
     }
-  };
+  }
 
   useEffect(() => {
     const getAllEmployees = async () => {
-      const allEmployees = await fetchEmployees();
-      if (allEmployees) setEmployees(allEmployees);
-    };
-    getAllEmployees();
-  }, []);
+      const allEmployees = await fetchEmployees()
+      if (allEmployees) setEmployees(allEmployees)
+    }
+    getAllEmployees()
+  }, [])
 
-  useEffect(() => {}, [employees]);
+  useEffect(() => {}, [employees])
 
   // const handleFormSubmit = async (e) => {
   //   e.preventDefault();
@@ -97,7 +97,7 @@ const App = () => {
       <Wrapper>
         <Loading />
       </Wrapper>
-    );
+    )
   }
 
   return (
@@ -107,12 +107,7 @@ const App = () => {
           <Col size='md-4'>
             <h2>Employee Directory</h2>
 
-            <SearchForm
-              // employees={employees}
-              searchKeyword={searchHandler}
-              // handleFormSubmit={handleFormSubmit}
-              term={search}
-            />
+            <SearchForm searchKeyword={searchHandler} term={search} />
           </Col>
         </div>
 
@@ -141,14 +136,14 @@ const App = () => {
                     city={e.city}
                     key={e.key}
                   />
-                );
+                )
               })}
             </table>
           </Col>
         </div>
       </div>
     </Wrapper>
-  );
-};
+  )
+}
 
-export default App;
+export default App
